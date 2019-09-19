@@ -55,7 +55,7 @@ De acuerdo a los datos de la Tabla 1, se realizó un gráfico con la Densidad Po
 
 ```{r, fig.cap= "Figura 1: Media de la Densidad Poblacional y la Media del Tamaño de la camada de acuerdo a la categoria taxonómica Orden." }
 ggplot(Pantheria.Datos3, aes(x = Orden)) + 
-  geom_col(aes(y = Densidad.Poblacional.Media),  fill="light blue", alpha =1.0) +
+  geom_col(aes(y = Densidad.Poblacional.Media), fill=c("#85C1E9", "#F08080", "#76D7C4", "#F4D03F", "#D7BDE2"), alpha =1.0) +
   geom_line(aes(y = Media.Tamaño.Camada*1000, group =), group = 10, color ="black")  +
   geom_text(aes(y = Media.Tamaño.Camada*1000, label = paste(round(Media.Tamaño.Camada, 2))),
             vjust = 2, color = "black", size = 4) +
