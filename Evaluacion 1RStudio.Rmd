@@ -78,5 +78,5 @@ Pan1 <- PanTHERIA_1_0_WR05_Aug2008 %>% select(MSW05_Order, MSW05_Family, MSW05_G
 ```
 
 
-El genero *Rodentia* tiene el valor del tamaño de la Camada más alto `r  (Pantheria.Datos3 %>%  select(Orden, Media.Tamaño.Camada) %>% filter(Orden == "Rodentia")) ` mientras que *Hyracoidea* `r (Pantheria.Datos3 %>%  select(Orden, Media.Tamaño.Camada) %>% filter(Orden == "Hyracoidea"))`. 
+El genero *Rodentia* tiene el valor del tamaño de la Camada más alto  de `r  (Pantheria.Datos3 %>%  select(Orden, Media.Tamaño.Camada) %>% filter(Orden == "Rodentia") %>%  select(Media.Tamaño.Camada)) ` mientras que *Hyracoidea*  que tiene la Densidad Poblacional Media más tiene tiene un valor del tamaño de la camda de `r (Pantheria.Datos3 %>%  select(Orden, Media.Tamaño.Camada) %>% filter(Orden == "Hyracoidea") %>%  select(Media.Tamaño.Camada))`. 
 
