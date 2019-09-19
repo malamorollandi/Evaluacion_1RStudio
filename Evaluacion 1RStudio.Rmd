@@ -3,7 +3,7 @@ title: "Evaluacion_1RStudio"
 author: "Martina_Alamo_R"
 date: "9/20/2019"
 output:
-  html_document:
+  html_document: 
     fig_caption: yes
   pdf_document: default
 ---
@@ -12,18 +12,54 @@ output:
 ```{r,message=FALSE, warning=FALSE, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
-En este informe nos dedicaremos a analizar la base de datos PanTHERIA.
+## Análisis de la base de datos PanTHERIA
+
+En este informe nos dedicaremos a analizar la base de datos PanTHERIA. Esta es una base que reune un conjunto global de datos a nivel de especie de rasgos clave de historia de vida, ecológicos y geográficos de todos los mamíferos existentes y recientemente extintos (PanTHERIA).
+
+Dentro de los diferentes rasgos presentes en PanTHERIA, en este trabajo nos centraremos en los razgos que podrian determinar el número de individuos en una población, por ende podrian estar implicados en el fitnes de la población:
+
+  - Tamaño de la Poblacion
+  - Densidad de la Población
+  - Tamaño de la Camada
+  - Número de Camada por año
 
 ```{r}
 library(tidyverse)
 library(broom)
-data("Pantheria.Datos2")
+library(ggplot2)
+library(readr)
+PanTHERIA_1_0_WR05_Aug2008 <- read_delim("~/Downloads/PanTHERIA_1-0_WR05_Aug2008.txt", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
 ```
 
-```{r, fig.cap= "Figura 1: variables que determinan"}
-ggplot( aes(x = Orden, y = Media.Densidad.Poblacional)) + geom_point()
+Los datos fueron filtrados de acuerdo a los que presentaban registros (los datos donde no existía informacón estaba descrito como -999.00).
+Por otro lado, se trabajo con los datos de PanTHERIA en la categoria taxonómica de Orden, por lo que se hizo un promedio de los datos anteriormente mencionados, además, se seleccionarons los datos que presentaban una densidad poblacional media sobre 500 individuos por km2, los que se muestran en la Tabla 1.
+
+```{r}
+Pantheria.Datos <- PanTHERIA_1_0_WR05_Aug2008 %>% select(MSW05_Order,   `9-1_GestationLen_d`,`15-1_LitterSize`, `16-1_LittersPerYear`,`21-1_PopulationDensity_n/km2`,`10-1_PopulationGrpSize`) 
+Pantheria.Datos <- Pantheria.Datos %>% rename(Orden = MSW05_Order,  Tiempo_Gestacion = `9-1_GestationLen_d`, Tamaño_Camada = `15-1_LitterSize`, Camada_año = `16-1_LittersPerYear`, Densidad_Poblacion = `21-1_PopulationDensity_n/km2`, Tamaño_grupo_poblacional = `10-1_PopulationGrpSize`)
+Pantheria.Datos1 <- Pantheria.Datos  %>% filter(Tiempo_Gestacion != -999.00, Tamaño_Camada != -999.00, Camada_año != -999.00, Densidad_Poblacion != -999.00, Tamaño_grupo_poblacional != -999.00)
+Pantheria.Datos2 <- Pantheria.Datos1 %>%  group_by(Orden) %>%  summarise(Media.Tamaño.Camada = mean(Tamaño_Camada), Media.Camada.Año = mean(Camada_año), Media.Tiempo.Gestación = mean(Tiempo_Gestacion), Media.Densidad.Poblacional = mean(Densidad_Poblacion))
+Pantheria.Datos3 <- Pantheria.Datos2 %>% filter(Media.Densidad.Poblacional > 500)
+
+```
+
+
+```{r}
+knitr::kable(Pantheria.Datos3, caption = "Tabla 1: Variables que determinan el tamaño de una población", digits = 2)
 ```
 
 
 
+```{r, fig.cap= "Figura 1: Media de la Densidad Poblacional y la Media del Tamaño de la camada de acuerdo a la categoria taxonómica Orden." }
+ggplot(Pantheria.Datos3, aes(x = Orden)) + 
+  geom_col(aes(y = Media.Densidad.Poblacional),  fill="light blue", alpha =1.0) +
+  geom_line(aes(y = Media.Tamaño.Camada*1000, group =), group = 10, color ="black")  +
+  geom_text(aes(y = Media.Tamaño.Camada*1000, label = paste(round(Media.Tamaño.Camada, 2))),
+            vjust = 2, color = "black", size = 4) +
+  theme_minimal() +
+ scale_y_continuous(sec.axis = sec_axis(~.* 1, name = "Media Tamaño Camada"))
+ 
+  
+```
 
